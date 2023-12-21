@@ -1,0 +1,37 @@
+- hosts: juraev2
+
+  vars:
+    apt_env:
+    DEBIAN_FRONTEND: noninteractive                        # Устанавливать пакеты с автоответом на вопросы
+    postfix_uid: 1024                                         # User ID
+    postfix_gid: 1024                                         # Group ID
+    myhostname: mail.juraev72.ru                              # Имя почтового сервера (FQDN)
+    mydomain: juraev72.ru                                     # Имя почтового домена @test.ru
+    domain: juraev72.ru
+    mynetworks: 127.0.0.0/8                                  # Открытый Relay для SMTP сервера Postfix
+    virtual_mailbox_base: /home/mail                               # Расположение писам в формате Maildir
+    sslpem: mail.juraev72.ru.pem                              # SSL-сертификат для Postfix/Dovecot/Apache2
+    imap_quota_ldap_attribute: st                            # Аттрибут для хранения значения IMAP4-квоты в байтах
+    postfix_pass: password123
+    postfixadmin_path: '/var/www/html/postfixadmin'
+    setup_password: Password952                                      #Generate setup_password hash 
+    mysql_username: postfix
+    mysql_hostname: localhost
+    mysql_password: password123
+    mysql_database: postfix
+    time_zone: Europe/Moscow
+    url_postfixadmin: 'https://github.com/postfixadmin/postfixadmin/archive/refs/tags/postfixadmin-3.3.13.tar.gz'
+    mail_user: admin2                                            # Администратор для postfixadmin
+    mail_user_pass_hash: $1$1b7ff416$/KKYqdyAd3viA3.PNu5hh/      # хеш пароль для администратора postfix qwe12345
+
+  tasks:
+#    - include_tasks: Tasks/chrony.yml
+#    - include_tasks: Tasks/port.yml
+#    - include_tasks: Tasks/pkg.yml
+#    - include_tasks: Tasks/ssl.yml
+    - include_tasks: Tasks/postfix.yml
+#    - include_tasks: Tasks/dovecot.yml
+#    - include_tasks: Tasks/mariadb.yml
+#    - include_tasks: Tasks/postfixadmin.yml
+#    - include_tasks: Tasks/roundcube.yml
+#    - include_tasks: Tasks/handlers.yml

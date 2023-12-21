@@ -1,0 +1,14 @@
+
+- name: Chrony - Install NTP-client
+  apt:
+    name: chrony
+    state: present
+
+- name: Chrony - time - zone
+  timezone:
+    name: '{{ time_zone }}'
+
+- name: Chrony - enable
+  systemd:
+    name: chrony
+    enabled: yes

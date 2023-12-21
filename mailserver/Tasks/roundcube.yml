@@ -1,0 +1,100 @@
+
+- name: Roundcubemail - Install required apt packages
+  apt:
+    name:
+       - php-pear
+       - php8.2-intl
+       - php8.2-ldap
+       - php-net-smtp
+       - php8.2-gd
+       - php8.2-imagick
+       - php8.2-zip
+       - php8.2-curl
+       - php8.2-dom
+       - php8.2-xml
+#       - php-mcrypt
+
+- name: "Roundcubemail - Downloud roundcubemail"
+  get_url:
+    url: 'https://github.com/roundcube/roundcubemail/releases/download/1.5.3/roundcubemail-1.5.3-complete.tar.gz'
+    dest: /tmp/roundcubemail.tar.gz
+
+- name: "Roundcubemail - Prepare - create Path"
+  file:
+    dest: "/var/www/html/webmail"
+    state: directory
+    recurse: yes
+    group: www-data
+    owner: www-data
+
+- name: "Roundcubemail - Ecstarck arhive"
+  unarchive:
+        src: /tmp/roundcubemail.tar.gz
+        dest: /var/www/html/webmail/
+        extra_opts: [--strip-components=1]
+        remote_src: yes
+
+- name: "Roundcubemail - Copy roundcube  config"
+  template:
+    src: Templates/Roundcube/config.inc.php.template
+    dest: /var/www/html/webmail/config/config.inc.php
+
+- name: Roundcubemail - сreate directory
+  file:
+    path=/var/www/html/webmail/temp/
+    mode=0775
+    owner=www-data
+    group=www-data
+    state=directory
+
+- name: Roundcubemail - сreate directory
+  file:
+    path=/var/www/html/webmail/logs/
+    mode=0775
+    owner=www-data
+    group=www-data
+    state=directory
+
+- name: Roundcubemail - сreate directory
+  file:
+    path=/home/mail/juraev72.ru
+    mode=0775
+    owner=vmail
+    group=vmail
+    state=directory
+
+#- name: Roundcubemail- date.timezone
+#  lineinfile:
+#    path: /etc/php/8.3/phpdbg/php.ini
+#    regexp: '^;date.timezone ='
+#    line: date.timezone = "Europe/Moscow"
+
+#- name: Roundcubemail- date.timezone
+#  lineinfile:
+#    path: /etc/php/8.3/cli/php.ini
+#    regexp: '^;date.timezone ='
+#    line: date.timezone = "Europe/Moscow"
+
+- name: Roundcubemail- date.timezone
+  lineinfile:
+    path: /etc/php/8.0/fpm/php.ini
+    regexp: '^;date.timezone ='
+    line: date.timezone = "Europe/Moscow"
+
+#- name: Roundcubemail- date.timezone
+#  lineinfile:
+#    path: /etc/php/8.2/fpm/php.ini
+#    regexp: '^;date.timezone ='
+#    line: date.timezone = "Europe/Moscow"
+
+#- name: Roundcubemail- date.timezone
+#  lineinfile:
+#    path: /etc/php/8.0/cli/php.ini
+#    regexp: '^;date.timezone ='
+#    line: date.timezone = "Europe/Moscow"
+
+#- name: Roundcubemail- date.timezone
+#  lineinfile:
+#    path: /etc/php/8.2/cli/php.ini
+#    regexp: '^;date.timezone ='
+#    line: date.timezone = "Europe/Moscow"

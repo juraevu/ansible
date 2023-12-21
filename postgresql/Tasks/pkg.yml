@@ -1,0 +1,84 @@
+---
+
+- name: Disable original postgresql dnf module
+  ansible.builtin.blockinfile:
+    path: /etc/dnf/modules.d/postgresql.module
+    create: yes
+    block: |
+      [postgresql]
+      name=postgresql
+      profiles=
+      state=disabled
+      stream=
+    mode: 0644
+  when:
+    - ansible_facts['distribution_major_version'] == "8"
+  notify: Dnf_cache
+
+- name: Make sure epel repo is installed
+  ansible.builtin.package:
+    name: "epel-release"
+    state: present
+
+- name: Import a key from a url
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://download.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
+
+- name: Install repo for PostgreSQL
+  ansible.builtin.package:
+    name: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    state: present
+  when:
+    - outgoing_proxy is not defined
+
+- name: "Install PostgreSQL version 12"
+  ansible.builtin.package:
+    name:
+      - "postgresql12-server"
+      - "postgresql"
+    state: present
+
+#- name: "Find out if PostgreSQL is initialized"
+#  ansible.builtin.stat:
+#    path: "/var/lib/pgsql/12/data/pg_hba.conf"
+#    register: postgres_data
+
+#- name: Initialize PostgreSQL
+#  shell: "/usr/pgsql-12/bin/postgresql-12-setup initdb"
+#  environment:
+#    PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#  when: not postgres_data.stat.exists
+
+
+- name: Initialize Postgres
+  command: /usr/pgsql-12/bin/postgresql-12-setup initdb
+  environment:
+    PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  become: true
+
+- name: Start postgresql service
+  ansible.builtin.service:
+    name: "postgresql-12"
+    state: started
+    enabled: true
+  become: true
+
+
+- name: Install Software PKG.yml
+  yum:
+    pkg:
+      - zip
+      - unzip
+      - mc
+      - wget
+      - nano
+    state: present
+    update_cache: true
+  become: yes
+
+
+
+
+
+

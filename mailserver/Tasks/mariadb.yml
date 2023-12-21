@@ -1,0 +1,165 @@
+
+
+###### Postfixadmin ########
+- name: install pip3
+  apt: name=python3-pip state=present
+
+- name: Install pymysql
+  pip:
+    name: pymysql
+    executable: pip3
+
+- name: Create a new database
+  community.mysql.mysql_db:
+    name: postfix
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create database user with name  and password  with all database privileges
+  community.mysql.mysql_user:
+    name: postfix
+    password: '{{ postfix_pass }}'
+    priv: '*.*:ALL'
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Copy database schema
+  copy:
+    src: Templates/MariaDB/schema.sql
+    dest: /tmp
+
+- name: Import schema.sql
+  community.mysql.mysql_db:
+    state: import
+    name: postfix
+    target: /tmp/schema.sql
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Copy database config
+  copy:
+    src: Templates/MariaDB/config.j2
+    dest: /tmp/config.sql
+
+###### Roundcube ########
+- name: install pip3
+  apt: name=python3-pip state=present
+
+- name: Install pymysql
+  pip:
+    name: pymysql
+    executable: pip3
+
+- name: Create a new database
+  community.mysql.mysql_db:
+    name: roundcubemail
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create database user with name  and password  with all database privileges
+  community.mysql.mysql_user:
+    name: roundcube
+    password: '{{ postfix_pass }}'
+    priv: '*.*:ALL'
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+
+
+
+#- name: Import mail config
+#  command: mysql --execute="source /tmp/config.sql;"
+#  tags: mysql
+
+#- name: Import config.sql
+#  community.mysql.mysql_db:
+#    state: import
+#    name: postfix
+#    target: /tmp/config.sql
+#    login_unix_socket: /run/mysqld/mysqld.sock
+
+
+
+
+
+
+
+
+
+#- name: >
+#    Dump of Databse with specific latin1 encoding,
+#    similar to mysqldump -u <username> --default-character-set=latin1 -p <password> <database>
+#  community.mysql.mysql_db:
+#    state: dump
+#    name: postfix
+#    target: /tmp/dump.sql
+#    login_unix_socket: /run/mysqld/mysqld.sock
+
+##########################################################################################################
+#- name: Import Databases
+#  community.mysql.mysql_user:
+#  mysql_db:
+#    name: postfix
+#    state: import
+#    target: /tmp/schema.sql
+#  with_items:
+#     - postfix
+#  login_unix_socket: /run/mysqld/mysqld.sock
+
+
+#- name: Mariadb - Create user postfix
+#  command: >
+#   mysql --execute="CREATE USER 'postfix'@'localhost' IDENTIFIED BY '{{ postfix_pass }}';"
+#  tags: mysql
+
+#- name: Mariadb - Create base postfix
+#  command: >
+#    mysql --execute="CREATE DATABASE postfix DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+#  tags: mysql
+
+#- name: Mariadb - permission user base postfix
+#  command: >
+#    mysql --execute="GRANT ALL ON postfix.* TO 'postfix'@'localhost';"
+#  tags: mysql
+
+#- name: Mariadb - Create user roundcube
+#  command: >
+#   mysql --execute="CREATE USER 'roundcube'@'localhost' IDENTIFIED BY '{{ postfix_pass }}';"
+#  tags: mysql
+
+#- name: Mariadb - Create base roundcubemail
+#  command: >
+#    mysql --execute="CREATE DATABASE roundcubemail DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+#  tags: mysql
+
+#- name: Mariadb permission user base roundcube
+#  command: >
+#    mysql --execute="GRANT ALL PRIVILEGES ON roundcubemail.* TO 'roundcube'@'localhost';"
+#  tags: mysql
+
+
+##########################################
+#- name: Copy database schema
+#  copy:
+#    src: Templates/MariaDB/schema.sql
+#    dest: /tmp
+#  tags: mysql
+
+#- name: Copy mail config
+#  template:
+#    src: Templates/MariaDB/config.j2
+#    dest: /tmp/config.sql
+#  tags: mysql
+
+#- name: Import database schema
+#  command: mysql --execute="source /tmp/schema.sql;"
+#  tags: mysql
+
+#- name: Import mail config
+#  command: mysql --execute="source /tmp/config.sql;"
+#  tags: mysql
+
+#- name: Delete mail config
+#  file:
+#    state: absent
+#    path: /tmp/config.sql
+#  tags: mysql

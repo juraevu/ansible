@@ -1,0 +1,21 @@
+
+- name: Pull an image
+  community.docker.docker_image:
+    name: sebp/elk
+    source: pull
+    pull:
+      platform: amd64
+
+- name: Create default containers elk
+  community.docker.docker_container:
+    name: elk.dev
+    image: sebp/elk
+#    command: -p 5601:5601 -p 9200:9200 -p 5044:5044 -e TZ=Europe/Moscow
+    state: started
+    ports:
+    - "5044:5044"
+    - "5601:5601"
+    - "9300:9300"
+    - "9200:9200"
+    - "9600:9600"
+#  with_sequence: count={{ container_count }}

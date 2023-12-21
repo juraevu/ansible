@@ -1,0 +1,43 @@
+---
+#- name: Install repository php 8.0
+#  command: apt install software-properties-common -y
+#  tags: php8.0
+
+#- name: add repository php 8.0 
+#  command: add-apt-repository ppa:ondrej/php -y
+#  tags: php8.0
+
+- name: Install MailServer Software
+  apt:
+    pkg:
+#      - chrony
+      - net-tools
+      - mc       
+      - wget     
+      - nano     
+      - fetchmail                   
+      - mlocate                     
+      - tree                        
+      - lsof                        
+      - rsyslog                     
+      - nginx
+      - php
+      - php-fpm
+      - mariadb-server
+      - mariadb-client
+      - php-mysql
+      - php-mbstring
+      - php-imap
+      - postfix                     
+      - postfix-mysql
+      - postfix-ldap                
+      - dovecot-mysql
+      - dovecot-ldap                
+      - dovecot-pop3d               
+      - dovecot-imapd               
+      - dovecot-lmtpd               
+      - iptables-persistent
+    state: present
+    update_cache: true
+  become: yes
+  environment: "{{ apt_env }}"

@@ -1,0 +1,4 @@
+use postfix;
+insert into domains (domain) values ('juraev72.ru');
+insert into accounts (username, domain, password, quota, enabled, sendonly) values ('{{ mail_user }}', '{{ mydomain }}', '{{ mail_user_pass_hash }}', 2048, true, false);
+insert into aliases (source_username, source_domain, destination_username, destination_domain, enabled) values ('alias', '{{ mydomain }}', '{{ mail_user }}', '{{ mydomain }}', true);

@@ -1,0 +1,22 @@
+---
+
+- name: "Install Software PHP end Apache"
+  ansible.builtin.package:
+    name:
+      - "httpd"
+      - "php"
+      - "php-mbstring"
+      - "php-mcrypt"
+      - "php-devel"
+      - "php-xml"
+      - "php-gd"
+      - "php-pgsql"
+
+    state: present
+
+- name: Start httpd service
+  ansible.builtin.service:
+    name: "httpd"
+    state: started
+    enabled: true
+  become: true

@@ -1,0 +1,40 @@
+#
+server {
+        listen 80;
+#        listen [::]:80 default_server;
+    rewrite ^ https://$server_name$request_uri? permanent;
+}
+
+server {
+    listen 443 ssl http2;
+    ssl_certificate /etc/letsencrypt/live/mail.juraev72.ru/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mail.juraev72.ru/privkey.pem;
+#    include ssl.conf;
+
+        root /var/www/html;
+
+        index index.html index.htm index.php;
+
+        server_name _;
+
+        location /webmail/installer/ {
+        root /var/www/html;
+
+        }
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+
+
+        location ~ \.php$ {
+            set $root_path /var/www/html;
+            fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME
+        $root_path$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_param DOCUMENT_ROOT $root_path;
+        }
+
+}

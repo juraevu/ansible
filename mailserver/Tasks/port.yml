@@ -1,0 +1,15 @@
+
+- name: Port - Install iptables-persistent
+  apt:
+    name: iptables-persistent
+    state: present
+
+- name: Allow port connection
+  iptables:
+        chain: INPUT
+        protocol: tcp
+        jump: ACCEPT
+  with_items: [ '22', '25', '80', '110','143', '443', '465', '587', '993', '995' ]
+
+- name: Ports - netfilter-persistent save
+  shell: netfilter-persistent save

@@ -1,0 +1,42 @@
+
+- name: "Downloud postfixadmin"
+  get_url:
+    url: "{{url_postfixadmin}}"
+    dest: /tmp/postfixadmin.tar.gz
+
+- name: "Prepare - create Path"
+  file:
+    dest: "/var/www/html/postfixadmin"
+    state: directory
+    recurse: yes
+    group: www-data
+    owner: www-data
+
+- name: "Ecstarck arhive"
+  unarchive:
+    src: /tmp/postfixadmin.tar.gz
+    dest: /var/www/html/postfixadmin/
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: "Prepare - create Path"
+  file:
+    dest: "/var/www/html/postfixadmin/templates_c"
+    state: directory
+    recurse: yes
+    group: www-data
+    owner: www-data
+
+- name: "Delete"
+  file:
+    path: "{{ postfixadmin_path }}/config.inc.php"
+    state: absent
+
+- name: "Configure postfixadmin"
+  template: src=../Templates/postfixadmin/config.inc.php dest={{ postfixadmin_path }}/config.inc.php
+
+- name: "Configure nginx default"
+  template: src=../Templates/postfixadmin/default dest=/etc/nginx/sites-enabled/default
+
+- name: "Configure postfixadmin2"
+  template: src=../Templates/postfixadmin/config.local.php dest={{ postfixadmin_path }}/config.local.php

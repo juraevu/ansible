@@ -1,0 +1,56 @@
+---
+
+- name: Dovecot - 10-auth.conf
+  template:
+    src: Templates/Dovecot/conf.d/10-auth.conf.template
+    dest: /etc/dovecot/conf.d/10-auth.conf
+
+- name: Dovecot - 10-logging.conf
+  template:
+    src: Templates/Dovecot/conf.d/10-logging.conf.template
+    dest: /etc/dovecot/conf.d/10-logging.conf
+
+- name: Dovecot - 10-mail.conf
+  template:
+    src: Templates/Dovecot/conf.d/10-mail.conf.template
+    dest: /etc/dovecot/conf.d/10-mail.conf
+
+- name: Dovecot - 10-master.conf
+  template:
+    src: Templates/Dovecot/conf.d/10-master.conf.template
+    dest: /etc/dovecot/conf.d/10-master.conf
+
+- name: Dovecot - 10-ssl.conf
+  template:
+    src: Templates/Dovecot/conf.d/10-ssl.conf.template
+    dest: /etc/dovecot/conf.d/10-ssl.conf
+
+- name: Dovecot - 15-lda.conf.template
+  template:
+    src: Templates/Dovecot/conf.d/15-lda.conf.template
+    dest: /etc/dovecot/conf.d/15-lda.conf
+
+- name: Dovecot - 20-imap.conf
+  template:
+    src: Templates/Dovecot/conf.d/20-imap.conf.template
+    dest: /etc/dovecot/conf.d/20-imap.conf
+
+- name: Dovecot - 90-quota.conf
+  template:
+    src: Templates/Dovecot/conf.d/90-quota.conf.template
+    dest: /etc/dovecot/conf.d/90-quota.conf
+
+- name: Dovecot - auth-sql.conf.ext.template
+  template:
+    src: Templates/Dovecot/conf.d/auth-sql.conf.ext.template
+    dest: /etc/dovecot/conf.d/auth-sql.conf.ext
+
+- name: Dovecot - dovecot-sql.conf.ext.template
+  template:
+    src: Templates/Dovecot/dovecot-sql.conf.ext.template
+    dest: /etc/dovecot/dovecot-sql.conf.ext
+
+- name: Dovecot - dovecot.cong.template
+  template:
+    src: Templates/Dovecot/dovecot.conf.template
+    dest: /etc/dovecot/dovecot.conf

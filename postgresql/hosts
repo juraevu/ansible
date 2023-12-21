@@ -1,0 +1,2 @@
+juraev3 ansible_host=10.8.0.3 ansible_port=22
+###juraev3 ansible_python_interpreter=/usr/bin/python3

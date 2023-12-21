@@ -1,0 +1,26 @@
+- hosts: juraev3
+
+  vars:
+    apt_env:
+    DEBIAN_FRONTEND: noninteractive                        # Устанавливать пакеты с автоответом на вопросы
+#    url_demobase: 'https://github.com/postfixadmin/postfixadmin/archive/refs/tags/postfixadmin-3.3.13.tar.gz'
+#    item: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+#    url_demobase: https://edu.postgrespro.ru/demo-small.zip
+#    db_user: student
+#    db_password: Password952
+#    ansible_python_interpreter: /usr/bin/python3
+#    db_name: demo
+
+  tasks:
+
+#    - include_tasks: Tasks/pkg.yml
+    - include_tasks: Tasks/elk.yml
+#    - include_tasks: Tasks/setup-demo-base.yml
+#    - include_tasks: Tasks/pgadmin.yml
+
+
+#    - include_tasks: Tasks/dovecot.yml
+#    - include_tasks: Tasks/mariadb.yml
+#    - include_tasks: Tasks/postfixadmin.yml
+#    - include_tasks: Tasks/roundcube.yml
+#    - include_tasks: Tasks/handlers.yml

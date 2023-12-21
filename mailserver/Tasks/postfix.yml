@@ -1,0 +1,53 @@
+
+- name: Postfix - Add a group called vmail
+  group:
+   name: vmail
+   gid: 1024
+   state: present
+
+- name: Postfix - Create a directory
+  ansible.builtin.file:
+   path: /home/mail
+   state: directory
+
+- name: Postfix - Add  user called
+  user:
+   name: vmail
+   uid: 1024
+   home: /home/mail
+
+- name: Postfix - Add a user to group
+  user:
+   name: vmail
+   groups: vmail
+   append: yes
+
+- name: Postfix - Delete default Postfix config
+  file:
+   path: /etc/postfix/main.cf
+   state: absent
+
+- name: Postfix - Create filled main.cf with variables
+  template:
+   src: Templates/Postfix/main.cf.template
+   dest: /etc/postfix/main.cf
+
+- name: Postfix - Create filled mysql_virtual_alias_maps.cf.template with variables
+  template:
+    src: Templates/Postfix/mysql_virtual_alias_maps.cf.template
+    dest: /etc/postfix/mysql_virtual_alias_maps.cf
+
+- name: Postfix - Create filled mysql_virtual_domains_maps.cf with variables
+  template:
+    src: Templates/Postfix/mysql_virtual_domains_maps.cf.template
+    dest: /etc/postfix/mysql_virtual_domains_maps.cf
+
+- name: Postfix - Create filled mysql_virtual_mailbox_maps.cf with variables
+  template:
+    src: Templates/Postfix/mysql_virtual_mailbox_maps.cf.template
+    dest: /etc/postfix/mysql_virtual_mailbox_maps.cf
+
+- name: Postfix - Create filled master.cf with variables
+  template:
+    src: Templates/Postfix/master.cf.template
+    dest: /etc/postfix/master.cf

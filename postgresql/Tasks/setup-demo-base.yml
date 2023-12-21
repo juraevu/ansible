@@ -1,0 +1,111 @@
+---
+
+- name: install pip3
+  yum: name=python3-pip state=present
+
+- name: Install Python packages
+  yum: name=python3-psycopg2  state=present
+
+- name: Create db user
+  community.postgresql.postgresql_user:
+    state: present
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    role_attr_flags: CREATEDB,CREATEROLE,SUPERUSER
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+#- name: Create app database
+#  postgresql_db:
+#    state: present
+#    name: "{{ db_name }}"
+#  become: yes
+#  become_user: postgres
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python3
+
+- name: Downloud Demo base
+  get_url:
+    url: "{{url_demobase}}"
+    dest: /tmp/demobase.zip
+
+- name: Prepare - create Path
+  file:
+    dest: "/var/lib/pgsql/demo"
+    state: directory
+    recurse: yes
+
+- name: Ecstarck arhive
+  unarchive:
+    src: /tmp/demobase.zip
+    dest: /var/lib/pgsql/demo
+#    extra_opts: [--strip-components=1]
+    remote_src: yes
+
+- name: testtest
+  command: chmod -R 777 /var/lib/pgsql/demo/demo-small-20170815.sql
+  environment:
+    PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+  become: true
+
+- name: Add some dummy data to our database
+  become: true
+  become_user: postgres
+  shell: psql postgres < /var/lib/pgsql/demo/demo-small-20170815.sql
+
+#- name: Grant db user access to app db
+#  postgresql_privs:
+#    type: database
+#    database: "{{ db_name }}"
+#    roles: "{{ db_user }}"
+#    grant_option: no
+#    privs: all
+#  become: yes
+#  become_user: postgres
+#  vars:
+#    ansible_python_interpreter: /usr/bin/python3
+
+- name: "Allow md5 connection for the db user"
+  postgresql_pg_hba:
+    dest: "/var/lib/pgsql/12/data/pg_hba.conf"
+    contype: host
+    databases: all
+    method: md5
+    users: "{{ db_user }}"
+    create: true
+  become: yes
+  become_user: postgres
+#  notify: restart postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Rename db
+  community.postgresql.postgresql_db:
+    state: rename
+    name: demo
+    target: fortests
+  become: true
+  become_user: postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Copy Bookings
+  template:
+    src: Templates/bookings.php
+    dest: /var/www/html/bookings.php
+
+- name: Copy Booking
+  template:
+    src: Templates/booking.php
+    dest: /var/www/html/booking.php
+
+- name: SELINUX=disabled
+  lineinfile: dest=/etc/selinux/config
+    regexp='^SELINUX=enforcing'
+    insertbefore=BOF
+    line='SELINUX=disabled'
+
+- name: restart postgres
+  service: name=postgresql-12 state=restarted

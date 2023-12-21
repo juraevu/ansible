@@ -1,0 +1,17 @@
+
+- name: Install pgadmin
+  yum:
+    name: https://ftp.postgresql.org/pub/pgadmin/pgadmin4/yum/pgadmin4-redhat-repo-2-1.noarch.rpm
+    state: present
+
+- name: Install pgadmin-web
+  ansible.builtin.package:
+    name:
+      - "pgadmin4-web"
+    state: present
+
+#- name: setup-web.sh
+#  command: printf 'test@juraev72.ru\{{ db_password }}\{{ db_password }}\y' | /usr/pgadmin4/bin/setup-web.sh
+#  environment:
+#    PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#  become: true
